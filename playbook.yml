@@ -1,0 +1,79 @@
+---
+- name: Ansible Pi Halloween Motion Sensor
+  hosts: pis
+
+  tasks:
+    # Preparing to build libcamera-apps from source because we use Ubuntu, there is a simple package for rasbian
+    - name: Install Camera Module Dependencies
+      become: true
+      apt:
+        pkg:
+          - libcamera-dev
+          - libepoxy-dev
+          - libjpeg-dev
+          - libtiff5-dev
+          - qtbase5-dev
+          - libqt5core5a
+          - libqt5gui5
+          - libqt5widgets5
+          - libavcodec-dev
+          - libavdevice-dev
+          - libavformat-dev
+          - libswresample-dev
+          - git
+          - libboost-dev
+          - libgnutls28-dev
+          - openssl
+          - libtiff5-dev
+          - pybind11-dev
+          - qtbase5-dev
+          - libqt5core5a
+          - libqt5gui5
+          - libqt5widgets5
+          - meson
+          - cmake
+          - libglib2.0-dev
+          - libgstreamer-plugins-base1.0-dev
+          - libraspberrypi-dev # Added
+          - libcamera-tools # Added
+          - libcap-dev # Added
+          - ython3-pyqt5
+          - python3-opengl
+    - name: Install Pip Module Build Dependencies
+      ansible.builtin.pip:
+         name:
+         - jinja2==3.0.3
+         - pyyaml
+         - ply
+         - meson
+    - name: Install Again At Root Level For build
+      ansible.builtin.pip:
+        name:
+          - jinja2==3.0.3
+          - pyyaml
+          - ply
+          - meson
+    - name: Checkout Camera Module Source
+      ansible.builtin.git:
+        repo: https://github.com/raspberrypi/libcamera.git
+        dest: /home/chris/third-party-source/libcamera
+        version: v0.0.5
+    - name: Do Build
+      ansible.builtin.command:
+        chdir: /home/chris/third-party-source/libcamera
+        cmd: meson build --buildtype=release -Dpipelines=raspberrypi -Dipas=raspberrypi -Dv4l2=true -Dgstreamer=enabled -Dtest=false -Dlc-compliance=disabled -Dcam=disabled -Dqcam=enabled -Ddocumentation=disabled -Dpycamera=enabled
+    - name: Finalize Build
+      become: true
+      ansible.builtin.command:
+        chdir: /home/chris/third-party-source/libcamera
+        cmd: ninja -C build install
+    - name: Install Camera Module
+      ansible.builtin.pip:
+        name: picamera
+#    - name: Install Camera Module Packages
+#      ansible.builtin.pip:
+#        name: python3-libcamera
+#      become: true
+#      apt:
+#        pkg:
+#          - python3-picamera

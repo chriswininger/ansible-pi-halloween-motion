@@ -1,0 +1,6 @@
+[pis]
+192.168.1.25
+
+[pis:vars]
+ansible_port=1027
+user=chris
