@@ -1,0 +1,58 @@
+---
+- name: Ansible Pi Halloween Motion Sensor
+  hosts: pis
+
+  tasks:
+    - name: Install Camera Apt Dependencies
+      become: true
+      apt:
+        pkg:
+          # FROM https://raspberrypi-guide.github.io/programming/install-opencv
+          - build-essential
+          - cmake
+          - pkg-config
+          - libjpeg-dev
+          - libtiff5-dev
+          # - libjasper-dev missing
+          - libpng-dev
+          - libavcodec-dev
+          - libavformat-dev
+          - libswscale-dev
+          - libv4l-dev
+          - libxvidcore-dev
+          - libx264-dev
+          - libfontconfig1-dev
+          - libcairo2-dev
+          - libgdk-pixbuf2.0-dev
+          - libpango1.0-dev
+          - libgtk2.0-dev
+          - libgtk-3-dev
+          - libatlas-base-dev
+          - gfortran
+          - libhdf5-dev
+          - libhdf5-serial-dev
+          - libhdf5-103
+          - python3-pyqt5
+          - python3-dev
+          # Seems to be you install this way rather than through pip, pip gives error recommending apt installation
+          - python3-opencv
+          - python3-numpy
+          # For Servo Hat https://learn.adafruit.com/adafruit-16-channel-pwm-servo-hat-for-raspberry-pi/attach-and-test-the-hat
+          - python3-smbus
+          - i2c-tools
+
+    - name: Create App directory
+      command: mkdir -p ~/ansible-pi-halloween-motion-app
+    - name: Install App Dependencies
+      ansible.builtin.pip:
+        chdir: ~/ansible-pi-halloween-motion-app
+        name:
+          - adafruit-circuitpython-servokit
+        virtualenv_site_packages: yes # include global
+        virtualenv: ~/ansible-pi-halloween-motion-app/venv
+        virtualenv_command: python3 -m venv
+    - name: Copy App Files
+      ansible.builtin.copy:
+        src: ../app/
+        dest: ~/ansible-pi-halloween-motion-app
+
