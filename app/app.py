@@ -17,6 +17,10 @@ def main():
 
     kit = ServoKit(channels=16)
 
+    kit.servo[0].angle = 0
+    kit.servo[1].angle = 0
+    kit.servo[2].angle = 0
+
     cap = cv2.VideoCapture(0, cv2.CAP_V4L)
 
     # from original skellington sketch (not sure I need to set it this low)
@@ -67,21 +71,27 @@ def main():
                 ind = ind + 1
 
         # draw rect around biggest contour
-        #print(detections)
+
         if (len(detections) > 0):
             x,y,w,h = detections[biggest_index]
             cv2.rectangle(roi, (x,y), (x+w, y+h), (0, 255, 0), 3)
-            #print('x: ' + str(x) + ', w: ' + str(w))
             head_angle = remap(float(x+(float(w)/2.0)), IN_MIN,IN_MAX,OUT_MIN,OUT_MAX)
             print('x: ' + str(x) + ', head: ' + str(head_angle))
 
-        head_angle_ave = head_angle * head_angle_alpha + head_angle_ave * (1.0 - head_angle_alpha)
+            head_angle_ave = head_angle * head_angle_alpha + head_angle_ave * (1.0 - head_angle_alpha)
+            kit.servo[0].angle = int(head_angle_ave)
+            kit.servo[1].angle = int(head_angle_ave)
+            kit.servo[2].angle = int(head_angle_ave)
 
         # uncomment for debugging
         cv2.imshow('frame', frame)
 
         if cv2.waitKey(1) == ord('q'):
             break
+
+    kit.servo[0].angle = 0
+    kit.servo[1].angle = 0
+    kit.servo[2].angle = 0
 
     cap.release()
     cv2.destroyAllWindows()
