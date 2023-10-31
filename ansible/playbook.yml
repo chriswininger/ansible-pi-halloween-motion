@@ -59,3 +59,12 @@
       file:
         dest:  ~/ansible-pi-halloween-motion-app/start.sh
         mode: a+x
+    - name: Start on boot
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/rc.local
+        regexp: '^[/]home[/]chris[/]ansible-pi-halloween-motion-app[/]start[.]sh [&]'
+        insertbefore: '^exit 0'
+        line: /home/chris/ansible-pi-halloween-motion-app/start.sh &
+
+
