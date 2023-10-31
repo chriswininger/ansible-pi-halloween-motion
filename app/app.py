@@ -1,6 +1,15 @@
 import cv2
 from adafruit_servokit import ServoKit
 import datetime
+import signal,sys
+
+terminate = False
+
+# ToDo, Fix not working https://stackoverflow.com/questions/24426451/how-to-terminate-loop-gracefully-when-ctrlc-was-pressed-in-python
+def signal_handling(signum,frame):
+    global terminate
+    terminate = True
+signal.signal(signal.SIGINT,signal_handling)
 
 IN_MIN = 30.0
 IN_MAX = 160.0
@@ -13,7 +22,12 @@ def main():
     head_angle_ave = 90.0
     head_angle_alpha = 0.25
 
+    arg_1 = sys.argv[1]
+
+    is_no_output = True if arg_1 == "--no-output" else False
+
     print('Running ', datetime.datetime.now())
+    print('isNoOutput: ', is_no_output)
 
     kit = ServoKit(channels=16)
 
@@ -84,10 +98,16 @@ def main():
             kit.servo[2].angle = int(head_angle_ave)
 
         # uncomment for debugging
-        cv2.imshow('frame', frame)
+        if not is_no_output:
+            cv2.imshow('frame', frame)
 
-        if cv2.waitKey(1) == ord('q'):
+        if not is_no_output and cv2.waitKey(1) == ord('q'):
             break
+
+        if terminate:
+            print("terminated")
+            break
+
 
     kit.servo[0].angle = 0
     kit.servo[1].angle = 0

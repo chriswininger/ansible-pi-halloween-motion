@@ -55,4 +55,7 @@
       ansible.builtin.copy:
         src: ../app/
         dest: ~/ansible-pi-halloween-motion-app
-
+    - name: Make start executable
+      file:
+        dest:  ~/ansible-pi-halloween-motion-app/start.sh
+        mode: a+x
