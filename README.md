@@ -7,6 +7,8 @@ heads or other objects.
 This project takes inspiration from [this great video](https://youtu.be/7m1dUC_UUts?si=urIwgGufX9uFYnqz).The original
 git repo is [here](https://github.com/curiousinventor/skellington)
 
+![halloween-collage.png](pictures%2Fhalloween-collage.png)
+
 ## Parts
 
 * PI 4 Model B 8 GB Ram
