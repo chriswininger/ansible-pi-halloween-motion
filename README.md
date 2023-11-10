@@ -9,6 +9,8 @@ git repo is [here](https://github.com/curiousinventor/skellington)
 
 ![halloween-collage.png](pictures%2Fhalloween-collage.png)
 
+[Demo Video](https://youtu.be/UbWzhChp_Zc)
+
 ## Parts
 
 * PI 4 Model B 8 GB Ram
